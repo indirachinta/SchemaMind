@@ -1,0 +1,69 @@
+{
+  "name": "schemamind",
+  "displayName": "SchemaMind",
+  "description": "Schema and context aware extension that can generate queries and result ",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.115.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:schemamind.askQuestion"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "SchemaMind Extension Configuration",
+      "properties": {
+        "schemamind.connectionString": {
+          "type": "string",
+          "default": "Server=EYETHINK;Database=AdventureWorks2019;User Id=Generic;Password=application@123;TrustServerCertificate=True;",
+          "description": "Database connection string for SchemaMind API requests"
+        },
+        "schemamind.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:5028",
+          "description": "URL of the SchemaMind API"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "schemamind.askQuestion",
+        "title": "Ask SchemaMind AI"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "schemamind.askQuestion",
+        "key": "ctrl+shift+s",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/node-fetch": "^2.6.13",
+    "@types/vscode": "^1.115.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}

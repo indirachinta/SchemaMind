@@ -1,0 +1,22 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# Build output
+Debug/
+Release/
+
+# Node (if any FE tools)
+node_modules/
+
+# VS Extension builds
+*.vsix
+
+# OS
+.DS_Store
+Thumbs.db
+
+**/appsettings.Development.json
