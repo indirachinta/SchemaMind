@@ -69,7 +69,11 @@ namespace SchemaMind.Api.Services
                 ).Trim();
                 try
                 {
-                    bool isvalid = SqlValidator.IsSafe(sqlQuery);
+                    bool isValid = SqlValidator.IsSafe(sqlQuery);
+                    if (!isValid)
+                    {
+                        throw new Exception("Unsafe SQL detected.");
+                    }
                     var results = await _queryExecutorService.Execute(sqlQuery,sqlconnection);
                     queryAndResults.query = sqlQuery;
                     queryAndResults.results = results;

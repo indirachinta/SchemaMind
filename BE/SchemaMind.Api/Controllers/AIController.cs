@@ -10,8 +10,7 @@ namespace SchemaMind.Api.Controllers
     [Route("ai")]
     public class AIController : ControllerBase
     {
-        private readonly SchemaService _schemaService;
-        private readonly ContextBuilder _contextBuilder;
+        
         private readonly AIService _aiService;
 
         public AIController(
@@ -20,8 +19,7 @@ namespace SchemaMind.Api.Controllers
 
             AIService aiService)
         {
-            _schemaService = schemaService;
-            _contextBuilder = contextBuilder;
+            
             _aiService = aiService;
         }
 
@@ -30,10 +28,7 @@ namespace SchemaMind.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 QueryAndResults results = await _aiService.GenerateSql(requestModel.Question! , requestModel.ConnectionString!);
-
-
                 return results;
             }
             return null;
