@@ -34,23 +34,10 @@ Instead of asking AI to guess, SchemaMind provides structured schema context bef
 ---
 
 ## ⚙️ Architecture
-VS Code Extension
-↓
-SchemaMind API (.NET)
-↓
-Schema Analyzer + Cache
-↓
-Context Builder
-↓
-AI Model (GitHub / OpenAI)
-↓
-SQL Validator
-↓
-Query Executor
-↓
-Self-Correction Loop
-↓
-Results
+VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache
+→ Context Builder → AI Model (GitHub / OpenAI)
+→ SQL Validator → Query Executor
+→ Self-Correction Loop → Results
 
 
 
