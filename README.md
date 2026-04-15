@@ -1,71 +1,180 @@
-# schemamind README
+# SchemaMind – AI Schema Intelligence Assistant
 
-This is the README for your extension "schemamind". After writing up a brief description, we recommend including the following sections.
+## Overview
 
-## Features
+SchemaMind is a lightweight developer tool that combines database schema awareness with AI to generate accurate SQL queries using natural language.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Unlike typical AI SQL assistants that rely solely on prompts, SchemaMind builds structured context from database metadata before invoking AI.
 
 ---
 
-## Following extension guidelines
+## Problem
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Most AI SQL tools follow:
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Prompt → AI → SQL
 
-## Working with Markdown
+This often leads to:
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+- incorrect joins  
+- invalid column references  
+- lack of schema awareness  
+- no reuse of existing database logic  
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+---
 
-## For more information
+## Solution
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+SchemaMind introduces Schema Intelligence:
 
-**Enjoy!**
+Schema → Context → AI → Validation → Execution → Correction
+
+Instead of asking AI to guess, SchemaMind provides structured schema context before generating SQL.
+
+---
+
+## Architecture
+
+```
+Client (VS Code Extension / Any UI) → SchemaMind API (.NET) → Schema Analyzer + Cache → Context Builder → AI Model (GitHub Models / OpenAI / Ollama) → SQL Validator → Query Executor → Self-Correction Loop → Results
+```
+
+---
+
+## Features
+
+- Schema-aware SQL generation  
+- Join path discovery using foreign keys  
+- Semantic table selection  
+- Per-database schema caching (hashed connection keys)  
+- AI self-correcting SQL execution loop (retry on failure)  
+- Pluggable client interface (VS Code extension is one example, not mandatory)  
+
+---
+
+## How It Works
+
+1. Developer enters a natural language query from any client (VS Code extension or other UI)  
+2. Client sends query + connection string to API  
+3. SchemaMind extracts tables and relationships (cached per DB)  
+4. ContextBuilder prepares schema-aware prompt  
+5. AI generates SQL  
+6. SQL is validated for unsafe operations  
+7. Query is executed  
+8. If execution fails, error is sent back to AI for correction  
+9. Process repeats (max 5 attempts)  
+10. Final SQL and results are returned  
+
+---
+
+## Tech Stack
+
+- .NET API  
+- Microsoft.Extensions.AI  
+- GitHub Models / OpenAI / Ollama  
+- SQL Server / PostgreSQL  
+- Dapper  
+- IMemoryCache  
+- VS Code Extension (example client implementation)  
+
+---
+
+## AI Model Integration
+
+SchemaMind uses **Microsoft.Extensions.AI** to remain model-agnostic.
+
+Supported integrations include:
+
+- GitHub Models  
+- Azure OpenAI / OpenAI  
+- Local models (Ollama)  
+
+This allows:
+
+- easy switching between AI providers  
+- flexibility in model experimentation  
+- future extensibility without changing core logic  
+
+---
+
+## Repository Structure
+
+```
+SchemaMind/
+├── BE/ → .NET API (Schema intelligence + AI pipeline)
+└── FE/ → Example client (VS Code extension)
+```
+
+---
+
+## API Example
+
+### Request
+
+```json
+{
+  "question": "Find customers with orders in the last 30 days",
+  "connectionString": "Server=...;Database=...;Trusted_Connection=True;"
+}
+```
+
+### Response
+
+```json
+{
+  "query": "SELECT ...",
+  "results": []
+}
+```
+
+---
+
+## Security Considerations (POC Scope)
+
+- Only safe SQL operations allowed (no DROP, DELETE, ALTER, TRUNCATE)  
+- Connection string passed per request (no persistence on server)  
+- No credential storage in backend  
+- Prompt-based systems may require additional validation in production  
+- Query execution should be restricted to read-only operations in production  
+
+---
+
+## Design Decisions
+
+- Stateless API using per-request connection string  
+- Schema caching keyed by hashed connection string  
+- Lightweight semantic table selection  
+- Self-correcting AI loop instead of one-shot SQL generation  
+- Separation of concerns across system components  
+- Model abstraction using Microsoft.Extensions.AI  
+
+---
+
+## Future Enhancements
+
+- Stored procedure and view reuse detection  
+- Dependency and lineage analysis  
+- Query explanation engine  
+- Embedding-based semantic table selection  
+- Multi-user isolation and authentication  
+- Query sandboxing and execution limits  
+- Support for multiple database providers  
+
+---
+
+## Why This Project
+
+This project explores the intersection of:
+
+- AI-assisted development  
+- database schema intelligence  
+- developer tooling  
+
+It moves beyond simple prompt-based SQL generation into structured reasoning using database metadata.
+
+---
+
+## Note
+
+This is a portfolio POC focused on architecture and workflow.  
+Production-grade security, scalability, and user isolation are intentionally out of scope.
