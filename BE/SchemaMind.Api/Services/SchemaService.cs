@@ -52,7 +52,29 @@ namespace SchemaMind.Api.Services
         {
             {
                 using var conn = dbConnectionService.GetConnection(sqlconnection);
-                var sql = "select FK_Name,FromTable,FromColumn,ToTable,ToColumn from ForeignKeys";
+                //var sql = "select FK_Name,FromTable,FromColumn,ToTable,ToColumn from ForeignKeys";
+                var sql = @"
+        SELECT
+            fk.name AS FK_Name,
+            OBJECT_SCHEMA_NAME(fk.parent_object_id) + '.' + tp.name AS FromTable,
+            cp.name AS FromColumn,
+            OBJECT_SCHEMA_NAME(fk.referenced_object_id) + '.' + tr.name AS ToTable,
+            cr.name AS ToColumn
+        FROM sys.foreign_keys fk
+        INNER JOIN sys.foreign_key_columns fkc
+            ON fk.object_id = fkc.constraint_object_id
+        INNER JOIN sys.tables tp
+            ON fkc.parent_object_id = tp.object_id
+        INNER JOIN sys.columns cp
+            ON fkc.parent_object_id = cp.object_id
+           AND fkc.parent_column_id = cp.column_id
+        INNER JOIN sys.tables tr
+            ON fkc.referenced_object_id = tr.object_id
+        INNER JOIN sys.columns cr
+            ON fkc.referenced_object_id = cr.object_id
+           AND fkc.referenced_column_id = cr.column_id
+        ORDER BY FromTable, ToTable;
+    ";
                 var foreignkeys = await conn.QueryAsync<ForeignKeySchema>(@sql);
                 return foreignkeys.ToList();
             }
