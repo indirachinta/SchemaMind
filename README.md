@@ -25,7 +25,7 @@ This often leads to:
 
 ## Solution
 
-SchemaMind introduces **Schema Intelligence**:
+SchemaMind introduces Schema Intelligence:
 
 Schema → Context → AI → Validation → Execution → Correction
 
@@ -34,11 +34,10 @@ Instead of asking AI to guess, SchemaMind provides structured schema context bef
 ---
 
 ## Architecture
-```
-VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache → Context Builder → AI Model (GitHub / OpenAI) → SQL Validator → Query Executor → Self-Correction Loop → Results
-```
 
-
+```
+Client (VS Code Extension / Any UI) → SchemaMind API (.NET) → Schema Analyzer + Cache → Context Builder → AI Model (GitHub Models / OpenAI / Ollama) → SQL Validator → Query Executor → Self-Correction Loop → Results
+```
 
 ---
 
@@ -49,22 +48,22 @@ VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache → Cont
 - Semantic table selection  
 - Per-database schema caching (hashed connection keys)  
 - AI self-correcting SQL execution loop (retry on failure)  
-- VS Code extension integration  
+- Pluggable client interface (VS Code extension is one example, not mandatory)  
 
 ---
 
 ## How It Works
 
-1. Developer enters a natural language query in VS Code  
-2. Extension sends query + connection string to API  
+1. Developer enters a natural language query from any client (VS Code extension or other UI)  
+2. Client sends query + connection string to API  
 3. SchemaMind extracts tables and relationships (cached per DB)  
 4. ContextBuilder prepares schema-aware prompt  
 5. AI generates SQL  
 6. SQL is validated for unsafe operations  
 7. Query is executed  
-8. If execution fails → error is sent back to AI for correction  
+8. If execution fails, error is sent back to AI for correction  
 9. Process repeats (max 5 attempts)  
-10. Final SQL + results returned  
+10. Final SQL and results are returned  
 
 ---
 
@@ -72,48 +71,42 @@ VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache → Cont
 
 - .NET API  
 - Microsoft.Extensions.AI  
+- GitHub Models / OpenAI / Ollama  
 - SQL Server / PostgreSQL  
 - Dapper  
 - IMemoryCache  
-- VS Code Extension (TypeScript)  
+- VS Code Extension (example client implementation)  
 
 ---
 
-## Security Considerations (POC Scope)
+## AI Model Integration
 
-- Only safe SQL operations allowed (no DROP, DELETE, ALTER, TRUNCATE)
-- Connection string passed per request (no persistence on server)
-- No credential storage in backend
-- Prompt-based systems may be vulnerable to injection → requires validation and sandboxing in production
-- Query execution should be restricted to read-only operations in production environments 
+SchemaMind uses **Microsoft.Extensions.AI** to remain model-agnostic.
+
+Supported integrations include:
+
+- GitHub Models  
+- Azure OpenAI / OpenAI  
+- Local models (Ollama)  
+
+This allows:
+
+- easy switching between AI providers  
+- flexibility in model experimentation  
+- future extensibility without changing core logic  
 
 ---
 
+## Repository Structure
 
-## Design Decisions
-
-- Stateless API using per-request connection string
-- Schema caching keyed by hashed connection string
-- Lightweight semantic table selection for improved accuracy
-- Self-correcting AI loop instead of one-shot SQL generation
-- Separation of concerns across schema extraction, context building, AI reasoning, and execution layers
----
-## Future Enhancements
-- Stored procedure / view reuse detection
-- Dependency and lineage analysis
-- Query explanation for legacy SQL
-- Embedding-based semantic table selection
-- Multi-user isolation and authentication
-- Query sandboxing and execution limits
-- Support for multiple database providers
----
-## Repo Structure
 ```
 SchemaMind/
 ├── BE/ → .NET API (Schema intelligence + AI pipeline)
-└── FE/ → VS Code extension (developer interface)
+└── FE/ → Example client (VS Code extension)
 ```
+
 ---
+
 ## API Example
 
 ### Request
@@ -126,15 +119,62 @@ SchemaMind/
 ```
 
 ### Response
+
 ```json
 {
   "query": "SELECT ...",
   "results": []
 }
 ```
+
 ---
 
+## Security Considerations (POC Scope)
+
+- Only safe SQL operations allowed (no DROP, DELETE, ALTER, TRUNCATE)  
+- Connection string passed per request (no persistence on server)  
+- No credential storage in backend  
+- Prompt-based systems may require additional validation in production  
+- Query execution should be restricted to read-only operations in production  
+
+---
+
+## Design Decisions
+
+- Stateless API using per-request connection string  
+- Schema caching keyed by hashed connection string  
+- Lightweight semantic table selection  
+- Self-correcting AI loop instead of one-shot SQL generation  
+- Separation of concerns across system components  
+- Model abstraction using Microsoft.Extensions.AI  
+
+---
+
+## Future Enhancements
+
+- Stored procedure and view reuse detection  
+- Dependency and lineage analysis  
+- Query explanation engine  
+- Embedding-based semantic table selection  
+- Multi-user isolation and authentication  
+- Query sandboxing and execution limits  
+- Support for multiple database providers  
+
+---
+
+## Why This Project
+
+This project explores the intersection of:
+
+- AI-assisted development  
+- database schema intelligence  
+- developer tooling  
+
+It moves beyond simple prompt-based SQL generation into structured reasoning using database metadata.
+
+---
 
 ## Note
-This is a portfolio POC focused on architecture and workflow.
+
+This is a portfolio POC focused on architecture and workflow.  
 Production-grade security, scalability, and user isolation are intentionally out of scope.
