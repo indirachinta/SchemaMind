@@ -20,12 +20,12 @@
       "properties": {
         "schemamind.connectionString": {
           "type": "string",
-          "default": "**YOUR DB CONNECTION**",
+          "default": "",
           "description": "Database connection string for SchemaMind API requests"
         },
         "schemamind.apiUrl": {
           "type": "string",
-          "default": "**Schema Mind API Link**",
+          "default": "",
           "description": "URL of the SchemaMind API"
         }
       }
