@@ -1,67 +1,86 @@
 import * as vscode from 'vscode';
+import fetch from 'node-fetch';
 import * as https from 'https';
-import fetch from 'node-fetch'; 
-// npm install node-fetch@2
-const agent = new https.Agent({
-    rejectUnauthorized: false
-});
+
 export function activate(context: vscode.ExtensionContext) {
-  vscode.commands.registerCommand('schemamind.askQuestion', async () => {
 
-    console.log("Command triggered");
+    console.log('SchemaMind extension activated');
 
-    const config = vscode.workspace.getConfiguration('schemamind');
-    const connectionString = config.get('connectionString');
-    const apiUrl = config.get('apiUrl');
+    const disposable = vscode.commands.registerCommand('schemamind.askQuestion', async () => {
 
-    console.log("Connection:", connectionString);
-    console.log("API URL:", apiUrl);
+        const config = vscode.workspace.getConfiguration('schemamind');
+        const connectionString = config.get<string>('connectionString');
+        const apiUrl = config.get<string>('apiUrl');
 
-    const question = await vscode.window.showInputBox({
-        prompt: "Enter your SQL question"
+        if (!connectionString) {
+            vscode.window.showErrorMessage('Please set SchemaMind connection string in settings.');
+            return;
+        }
+
+        if (!apiUrl) {
+            vscode.window.showErrorMessage('Please set SchemaMind API URL in settings.');
+            return;
+        }
+
+        const question = await vscode.window.showInputBox({
+            prompt: 'Enter your SQL question'
+        });
+
+        if (!question) {
+            vscode.window.showWarningMessage('No question entered.');
+            return;
+        }
+
+        vscode.window.showInformationMessage('SchemaMind: Generating SQL...');
+
+        // ✅ HTTPS agent (fix for self-signed cert issue)
+        const agent = new https.Agent({
+            rejectUnauthorized: false
+        });
+
+        try {
+            const response = await fetch(`${apiUrl}/generate-sql`, {
+                method: 'POST',
+                agent: agent, // ✅ IMPORTANT FIX
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: question,
+                    connectionString: connectionString
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            const output = `
+-- Generated SQL
+${data.query}
+
+-- Results
+${JSON.stringify(data.results, null, 2)}
+`;
+
+            const doc = await vscode.workspace.openTextDocument({
+                content: output,
+                language: 'sql'
+            });
+
+            await vscode.window.showTextDocument(doc);
+
+            vscode.window.showInformationMessage('SchemaMind: SQL generated successfully');
+
+        } catch (err: any) {
+            console.error(err);
+            vscode.window.showErrorMessage(`SchemaMind Error: ${err.message}`);
+        }
     });
 
-    console.log("Question:", question);
-
-    if (!question) {
-        vscode.window.showWarningMessage("No question entered");
-        return;
-    }
-
-    vscode.window.showInformationMessage("Calling SchemaMind API...");
-
-    try {
-        const response = await fetch(`${apiUrl}/generate-sql`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                question: question,
-                connectionString: connectionString
-            })
-        });
-
-        console.log("Response received");
-
-        const data = await response.json();
-
-        console.log("Response data:", data);
-
-        vscode.window.showInformationMessage("SQL Generated!");
-
-        const output = `SQL:\n${data.query}\n\nResults:\n${JSON.stringify(data.results, null, 2)}`;
-
-        const doc = await vscode.workspace.openTextDocument({
-            content: output,
-            language: 'sql'
-        });
-
-        await vscode.window.showTextDocument(doc);
-
-    } catch (err: any) {
-        console.error("Error:", err);
-        vscode.window.showErrorMessage("Error: " + err.message);
-    }
-});
-
-   
+    context.subscriptions.push(disposable);
 }
+
+export function deactivate() {}

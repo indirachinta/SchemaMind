@@ -97,6 +97,54 @@ This allows:
 
 ---
 
+## Extensibility: Multi-Database Support
+
+The current POC demonstrates the workflow using a SQL Server-oriented implementation. However, the architecture is intentionally designed to support multiple database providers such as PostgreSQL and Oracle.
+
+### Why it is extensible
+
+- Connection string is supplied per request by the client  
+- Schema extraction is isolated within the schema service layer  
+- AI reasoning operates on normalized schema metadata (tables, columns, relationships)  
+- SQL generation is driven by schema context rather than hardcoded queries  
+
+This separation ensures that database-specific logic is confined to a limited part of the system.
+
+### What would change for other databases
+
+To support additional providers, only a few components need to be adapted:
+
+- Database connection implementation (e.g., Npgsql for PostgreSQL, Oracle client for Oracle)  
+- Schema metadata queries (information_schema / system tables)  
+- SQL dialect differences (e.g., LIMIT vs TOP, date functions, identifier quoting)  
+
+### Suggested extension approach
+
+A natural extension would introduce provider-based abstractions such as:
+
+- `IDbConnectionFactory`  
+- `ISchemaProvider`  
+- `ISqlDialectProvider`  
+
+With implementations like:
+
+- `SqlServerSchemaProvider`  
+- `PostgresSchemaProvider`  
+- `OracleSchemaProvider`  
+
+The client could then pass a provider type (e.g., `sqlserver`, `postgres`, `oracle`), and the backend would resolve the appropriate implementation.
+
+### Key Design Insight
+
+The AI reasoning layer remains unchanged across databases.  
+Only schema extraction and SQL dialect handling need provider-specific logic.
+
+This allows SchemaMind to scale across database systems without changing the core AI pipeline.
+
+
+
+
+
 ## Repository Structure
 
 ```
