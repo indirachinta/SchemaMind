@@ -22,14 +22,13 @@ namespace SchemaMind.Api.Controllers
         }
 
         [HttpPost("generate-sql")]
-        public async Task<QueryAndResults> GenerateSql([FromBody] QueryRequest requestModel)
+        public async Task<ActionResult<QueryAndResults>> GenerateSql([FromBody] QueryRequest requestModel)
         {
-            if (ModelState.IsValid)
-            {
-                QueryAndResults results = await _aiService.GenerateSql(requestModel.Question! , requestModel.ConnectionString!);
-                return results;
-            }
-            return null;
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var results = await _aiService.GenerateSql(requestModel.Question!, requestModel.ConnectionString!);
+            return Ok(results);
         }
     }
 }

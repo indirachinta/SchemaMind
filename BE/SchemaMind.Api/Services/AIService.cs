@@ -103,7 +103,7 @@ namespace SchemaMind.Api.Services
             }
             queryAndResults.query = @response.ToString();
             queryAndResults.results = null;
-            _logger.LogInformation("SQL executed successfully on attempt {Attempt}", i + 1);
+            _logger.LogWarning("SQL generation/execution failed after maximum retry attempts");
             return queryAndResults;
         }
 
