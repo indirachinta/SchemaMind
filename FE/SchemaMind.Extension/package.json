@@ -20,12 +20,12 @@
       "properties": {
         "schemamind.connectionString": {
           "type": "string",
-          "default": "Server=EYETHINK;Database=AdventureWorks2019;User Id=Generic;Password=application@123;TrustServerCertificate=True;",
+          "default": "**YOUR DB CONNECTION**",
           "description": "Database connection string for SchemaMind API requests"
         },
         "schemamind.apiUrl": {
           "type": "string",
-          "default": "http://localhost:5028",
+          "default": "**Schema Mind API Link**",
           "description": "URL of the SchemaMind API"
         }
       }
