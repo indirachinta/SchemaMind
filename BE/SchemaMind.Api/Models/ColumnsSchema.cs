@@ -1,6 +1,6 @@
 ﻿namespace SchemaMind.Api.Models
 {
-    public class ColumsSchema
+    public class ColumnsSchema
     {
         public class ColumnSchema
         {

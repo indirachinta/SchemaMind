@@ -26,7 +26,7 @@ namespace SchemaMind.Api.Controllers
         }
 
         [HttpPost("generate-sql")]
-        public async Task<QueryAndResults> GenerateSql([FromBody] RequestModel requestModel)
+        public async Task<QueryAndResults> GenerateSql([FromBody] QueryRequest requestModel)
         {
             if (ModelState.IsValid)
             {

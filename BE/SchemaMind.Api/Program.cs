@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SchemaService>();
 builder.Services.AddSingleton<AIService>();
 builder.Services.AddSingleton<ContextBuilder>();
-builder.Services.AddSingleton<SchemaCasheService>();
+builder.Services.AddSingleton<SchemaCacheService>();
 builder.Services.AddSingleton<SemanticSelectorService>();
 builder.Services.AddTransient<QueryExecutorService>();
 //builder.Services.AddTransient <IDbConnection>(u=> new SqlConnection(builder.Configuration.GetConnectionString("Default")));
@@ -45,6 +45,8 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 

@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Microsoft.Extensions.AI;
 using SchemaMind.Api.Models;
+using Microsoft.Extensions.Logging;
 
 namespace SchemaMind.Api.Services
 {
@@ -9,19 +10,21 @@ namespace SchemaMind.Api.Services
         private readonly IChatClient _chatClient;
         private readonly ContextBuilder _contextBuilder;
         private readonly QueryExecutorService _queryExecutorService;
-        private readonly DbConnectionService dbConnectionService;
+        private readonly DbConnectionService _dbConnectionService;
+        private readonly ILogger<AIService> _logger;
 
-        public AIService(IChatClient chatClient, ContextBuilder contextBuilder, QueryExecutorService queryExecutorService, DbConnectionService dbConnectionService)
+        public AIService(IChatClient chatClient, ContextBuilder contextBuilder, QueryExecutorService queryExecutorService, DbConnectionService dbConnectionService, ILogger<AIService> logger)
         {
             _chatClient = chatClient;
             _contextBuilder = contextBuilder;
             _queryExecutorService = queryExecutorService;
-            this.dbConnectionService = dbConnectionService;
+            _dbConnectionService = dbConnectionService;
+            _logger = logger;
         }
 
         public async Task<QueryAndResults> GenerateSql(string question,string sqlconnection)
         {
-            
+            _logger.LogInformation("Received question: {Question}", question);
             var schema = await _contextBuilder.BuildSchemaContext(question, sqlconnection);
             QueryAndResults queryAndResults = new QueryAndResults();
             var prompt = $"""
@@ -38,13 +41,15 @@ namespace SchemaMind.Api.Services
                          User request:
                          {question}
 
-                         Output format: Should be pure sql string directly executable againt database
+                        Output format: Should be pure sql string directly executable againt database
+                        Return ONLY raw SQL. No markdown, no explanation.
                         """;
 
             var response = await _chatClient.GetResponseAsync(prompt);
             int i = 0;
             while (i <= 5)
             {
+                _logger.LogInformation("Attempt {Attempt} for SQL generation", i + 1);
                 string fullResponse = response.ToString();
                 string startMarker = "```sql";
                 string endMarker = "```";
@@ -73,6 +78,7 @@ namespace SchemaMind.Api.Services
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Error executing SQL on attempt {Attempt}", i + 1);
                     prompt = prompt +
                                     $"""
                                 there was an error {ex.Message} while executinting the previous response from the model
@@ -85,6 +91,7 @@ namespace SchemaMind.Api.Services
             }
             queryAndResults.query = @response.ToString();
             queryAndResults.results = null;
+            _logger.LogInformation("SQL executed successfully on attempt {Attempt}", i + 1);
             return queryAndResults;
         }
 

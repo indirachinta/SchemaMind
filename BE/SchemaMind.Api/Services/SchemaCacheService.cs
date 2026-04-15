@@ -4,12 +4,12 @@ using SchemaMind.Api.Helpers;
 
 namespace SchemaMind.Api.Services
 {
-    public class SchemaCasheService
+    public class SchemaCacheService
     {
         private readonly IMemoryCache memoryCache;
         private readonly SchemaService schemaService;
 
-        public SchemaCasheService(IMemoryCache memoryCache, SchemaService schemaService)
+        public SchemaCacheService(IMemoryCache memoryCache, SchemaService schemaService)
         {
             this.memoryCache = memoryCache;
             this.schemaService = schemaService;

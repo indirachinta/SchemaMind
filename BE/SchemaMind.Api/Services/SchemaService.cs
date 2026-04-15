@@ -2,7 +2,7 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using SchemaMind.Api.Models;
 using System.Data;
-using static SchemaMind.Api.Models.ColumsSchema;
+using static SchemaMind.Api.Models.ColumnsSchema;
 
 namespace SchemaMind.Api.Services
 {
@@ -17,7 +17,7 @@ namespace SchemaMind.Api.Services
 
         public async Task<List<TableSchema>> GetTables(string sqlconnection)
         {
-            var conn = dbConnectionService.GetConnection(sqlconnection);
+            using var conn = dbConnectionService.GetConnection(sqlconnection);
 
             var tables = await conn.QueryAsync<string>(
                 @"SELECT TABLE_SCHEMA +'.'+ TABLE_NAME as TableName
@@ -49,7 +49,7 @@ namespace SchemaMind.Api.Services
         public async Task<List<ForeignKeySchema>> GetForeignKeys(string sqlconnection)
         {
             {
-                var conn = dbConnectionService.GetConnection(sqlconnection);
+                using var conn = dbConnectionService.GetConnection(sqlconnection);
                 var sql = "select FK_Name,FromTable,FromColumn,ToTable,ToColumn from ForeignKeys";
                 var foreignkeys = await conn.QueryAsync<ForeignKeySchema>(@sql);
                 return foreignkeys.ToList();

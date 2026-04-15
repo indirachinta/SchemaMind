@@ -5,10 +5,10 @@ namespace SchemaMind.Api.Services
 {
     public class ContextBuilder
     {
-        private readonly SchemaCasheService schemaCasheService;
+        private readonly SchemaCacheService schemaCasheService;
         private readonly SemanticSelectorService semanticSelectorService;
 
-        public ContextBuilder(SchemaCasheService schemaCasheService, SemanticSelectorService semanticSelectorService)
+        public ContextBuilder(SchemaCacheService schemaCasheService, SemanticSelectorService semanticSelectorService)
         {
             this.schemaCasheService = schemaCasheService;
             this.semanticSelectorService = semanticSelectorService;

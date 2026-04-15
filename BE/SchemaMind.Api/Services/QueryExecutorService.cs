@@ -14,8 +14,8 @@ namespace SchemaMind.Api.Services
 
         public async Task<IEnumerable<dynamic>> Execute(string sql,string sqlconnection)
         {
-            var dbConnection = dbConnectionService.GetConnection(sqlconnection);
-            return await dbConnection.QueryAsync(@sql);
+            using var dbConnection = dbConnectionService.GetConnection(sqlconnection);
+            return await dbConnection.QueryAsync(sql);
         }
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 
 namespace SchemaMind.Api.Services
 {
-    public class DbConnectionService : IDisposable
+    public class DbConnectionService 
     {
         private IDbConnection? connection;
 

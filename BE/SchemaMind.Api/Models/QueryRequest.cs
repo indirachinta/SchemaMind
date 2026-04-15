@@ -2,7 +2,7 @@
 
 namespace SchemaMind.Api.Models
 {
-    public class RequestModel
+    public class QueryRequest
     {
         [Required]
         public string? question { get; set; }
