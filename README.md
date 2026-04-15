@@ -1,6 +1,6 @@
 # SchemaMind – AI Schema Intelligence Assistant
 
-## 🚀 Overview
+## Overview
 
 SchemaMind is a lightweight developer tool that combines database schema awareness with AI to generate accurate SQL queries using natural language.
 
@@ -8,7 +8,7 @@ Unlike typical AI SQL assistants that rely solely on prompts, SchemaMind builds 
 
 ---
 
-## 💡 Problem
+## Problem
 
 Most AI SQL tools follow:
 
@@ -23,7 +23,7 @@ This often leads to:
 
 ---
 
-## 🧠 Solution
+## Solution
 
 SchemaMind introduces **Schema Intelligence**:
 
@@ -33,7 +33,7 @@ Instead of asking AI to guess, SchemaMind provides structured schema context bef
 
 ---
 
-## ⚙️ Architecture
+## Architecture
 VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache
 → Context Builder → AI Model (GitHub / OpenAI)
 → SQL Validator → Query Executor
@@ -43,7 +43,7 @@ VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache
 
 ---
 
-## 🔑 Features
+## Features
 
 - Schema-aware SQL generation  
 - Join path discovery using foreign keys  
@@ -54,7 +54,7 @@ VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache
 
 ---
 
-## 🔄 How It Works
+## How It Works
 
 1. Developer enters a natural language query in VS Code  
 2. Extension sends query + connection string to API  
@@ -69,7 +69,7 @@ VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - .NET API  
 - Microsoft.Extensions.AI  
@@ -80,7 +80,7 @@ VS Code Extension → SchemaMind API (.NET) → Schema Analyzer + Cache
 
 ---
 
-## 📦 API Example
+## API Example
 
 ### Request
 
