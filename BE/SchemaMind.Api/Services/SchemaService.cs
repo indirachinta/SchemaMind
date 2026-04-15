@@ -28,13 +28,15 @@ namespace SchemaMind.Api.Services
 
             foreach (var table in tables)
             {
+                var parts = table.Split('.');
+                var schemaName = parts[0];
+                var tableName = parts[1];
                 var columns = await conn.QueryAsync<ColumnSchema>(
-                    @"SELECT COLUMN_NAME as Name,
-                         DATA_TYPE as DataType
-                  FROM INFORMATION_SCHEMA.COLUMNS
-                  WHERE TABLE_NAME=@table",
-                    new { table });
-
+        @"SELECT COLUMN_NAME as Name,
+                 DATA_TYPE as DataType
+          FROM INFORMATION_SCHEMA.COLUMNS
+          WHERE TABLE_SCHEMA = @schemaName AND TABLE_NAME = @tableName",
+        new { schemaName, tableName });
                 result.Add(new TableSchema
                 {
                     Name = table,

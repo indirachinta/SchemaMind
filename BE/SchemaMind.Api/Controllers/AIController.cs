@@ -31,7 +31,7 @@ namespace SchemaMind.Api.Controllers
             if (ModelState.IsValid)
             {
 
-                var results = await _aiService.GenerateSql(requestModel.question, requestModel.connection);
+                QueryAndResults results = await _aiService.GenerateSql(requestModel.Question! , requestModel.ConnectionString!);
 
 
                 return results;

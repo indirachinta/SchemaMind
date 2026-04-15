@@ -42,7 +42,6 @@ namespace SchemaMind.Api.Services
                          {question}
 
                         Output format: Should be pure sql string directly executable againt database
-                        Return ONLY raw SQL. No markdown, no explanation.
                         """;
 
             var response = await _chatClient.GetResponseAsync(prompt);
@@ -83,7 +82,15 @@ namespace SchemaMind.Api.Services
                                     $"""
                                 there was an error {ex.Message} while executinting the previous response from the model
                                 {response}
+
+                                You have only 5 attempts to return the correct query ,so carefully examine the schema for tables, columns,relationships and this is
+                                is attempt no: {i+1} 
+
+                                Try to get all columns like * from main table if you cross 3 attempts
+
                                 Now please correct and give the right query
+
+                                Output format: Should be pure sql string directly executable againt database
                                 """;
                     response = await _chatClient.GetResponseAsync(prompt);
                     i++;

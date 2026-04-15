@@ -5,9 +5,9 @@ namespace SchemaMind.Api.Models
     public class QueryRequest
     {
         [Required]
-        public string? question { get; set; }
+        public string? Question { get; set; }
 
         [Required]
-        public string? connection { get; set; }
+        public string? ConnectionString { get; set; }
     }
 }

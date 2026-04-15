@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddSingleton<IChatClient>(new OpenAIClient(new ApiKeyCredential(apiKey), options).GetChatClient(model).AsIChatClient());
 
 builder.Services.AddAI(builder.Configuration);
-builder.Services.AddSingleton<AIService>();
+
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
