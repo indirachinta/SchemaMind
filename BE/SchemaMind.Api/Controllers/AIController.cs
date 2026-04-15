@@ -14,9 +14,7 @@ namespace SchemaMind.Api.Controllers
         private readonly AIService _aiService;
 
         public AIController(
-            SchemaService schemaService,
-            ContextBuilder contextBuilder,
-
+            
             AIService aiService)
         {
             

@@ -49,24 +49,25 @@ namespace SchemaMind.Api.Services
             while (i <= 5)
             {
                 _logger.LogInformation("Attempt {Attempt} for SQL generation", i + 1);
-                string fullResponse = response.ToString();
-                string startMarker = "```sql";
-                string endMarker = "```";
+                string fullResponse = response.ToString().Trim();
+                string sqlQuery = fullResponse;
 
-                // Find positions
-                int startIndex = fullResponse.IndexOf(startMarker, StringComparison.OrdinalIgnoreCase);
-                int endIndex = fullResponse.IndexOf(endMarker, startIndex + startMarker.Length, StringComparison.OrdinalIgnoreCase);
-
-                if (startIndex == -1 || endIndex == -1)
+                if (fullResponse.Contains("```sql", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new Exception("SQL markers not found in response");
-                }
+                    string startMarker = "```sql";
+                    string endMarker = "```";
 
-                // Extract SQL between the markers
-                string sqlQuery = fullResponse.Substring(
-                    startIndex + startMarker.Length,
-                    endIndex - (startIndex + startMarker.Length)
-                ).Trim();
+                    int startIndex = fullResponse.IndexOf(startMarker, StringComparison.OrdinalIgnoreCase);
+                    int endIndex = fullResponse.IndexOf(endMarker, startIndex + startMarker.Length, StringComparison.OrdinalIgnoreCase);
+
+                    if (startIndex != -1 && endIndex != -1)
+                    {
+                        sqlQuery = fullResponse.Substring(
+                            startIndex + startMarker.Length,
+                            endIndex - (startIndex + startMarker.Length)
+                        ).Trim();
+                    }
+                }
                 try
                 {
                     bool isValid = SqlValidator.IsSafe(sqlQuery);
