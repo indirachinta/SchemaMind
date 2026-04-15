@@ -1,71 +1,36 @@
-# schemamind README
+# SchemaMind – AI Schema Intelligence Assistant
 
-This is the README for your extension "schemamind". After writing up a brief description, we recommend including the following sections.
+## 🚀 Overview
 
-## Features
+SchemaMind is a lightweight developer tool that combines database schema awareness with AI to generate accurate SQL queries using natural language.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Unlike typical AI SQL assistants that rely solely on prompts, SchemaMind builds structured context from database metadata before invoking AI.
 
 ---
 
-## Following extension guidelines
+## 💡 Problem
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+Most AI SQL tools follow:
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Prompt → AI → SQL
 
-## Working with Markdown
+This often leads to:
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+- incorrect joins  
+- invalid column references  
+- lack of schema awareness  
+- no reuse of existing database logic  
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+---
 
-## For more information
+## 🧠 Solution
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+SchemaMind introduces **Schema Intelligence**:
 
-**Enjoy!**
+Schema → Context → AI → Validation → Execution → Correction
+
+Instead of asking AI to guess, SchemaMind provides structured schema context before generating SQL.
+
+---
+
+## ⚙️ Architecture
